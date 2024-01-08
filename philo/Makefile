@@ -2,7 +2,7 @@ NAME	=	Philosophers
 FLAGS	=	-Wall -Wextra -Werror
 
 SRC_DIR	=	src/
-SRC		=	$(addprefix $(SRC_DIR), )
+SRC		=	$(addprefix $(SRC_DIR), main.c)
 OBJ_DIR	=	obj/
 OBJ		=	$(addprefix $(OBJ_DIR), $(notdir $(SRC:.c=.o)))
 
