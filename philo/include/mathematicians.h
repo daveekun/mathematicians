@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mathematicians.h                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dhorvath <dhorvath@hive.student.fi>        +#+  +:+       +#+        */
+/*   By: dhorvath <dhorvath@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/08 11:28:13 by dhorvath          #+#    #+#             */
-/*   Updated: 2024/01/08 11:29:50 by dhorvath         ###   ########.fr       */
+/*   Updated: 2024/01/08 15:49:19 by dhorvath         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,5 +16,5 @@
 # include <stdio.h>
 # include <stdlib.h>
 # include <pthread.h>
-
+# include <unistd.h>
 #endif
