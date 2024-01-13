@@ -1,6 +1,5 @@
 NAME	=	Philosophers
-FLAGS	=	-Wall -Wextra -Werror
-
+FLAGS	=	-pthread -fsanitize=thread -g
 SRC_DIR	=	src/
 SRC		=	$(addprefix $(SRC_DIR), main.c)
 OBJ_DIR	=	obj/
