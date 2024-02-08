@@ -6,7 +6,7 @@
 /*   By: dhorvath <dhorvath@hive.student.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/08 11:27:30 by dhorvath          #+#    #+#             */
-/*   Updated: 2024/01/12 17:18:43 by dhorvath         ###   ########.fr       */
+/*   Updated: 2024/02/08 16:00:24 by dhorvath         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,15 +14,11 @@
 
 pthread_t	make_death_thread(t_args *args);
 
-void	take_left_fork(t_args *args)
-{
-
-}
-
-/* Todo spearate activities into the respective functions and add the times to the messages */
+/* Todo spearate activities into the respective
+ functions and add the times to the messages */
 void	*philosoph(void *arg)
 {
-	t_args *args;
+	t_args	*args;
 
 	args = (t_args *) arg;
 	pthread_mutex_lock(&(args->info->stdout_m));
@@ -31,98 +27,21 @@ void	*philosoph(void *arg)
 	{
 		if (args->self.index % 2)
 		{
-			pthread_mutex_lock(&(args->info->forks[(args->self.index) % 4]));
-			pthread_mutex_lock(&(args->info->stdout_m));
-			printf("%i took a fork\n", args->self.index);
-			pthread_mutex_unlock(&(args->info->stdout_m));
-
-			pthread_mutex_lock(&(args->info->forks[(args->self.index + 1) % 4]));
-			pthread_mutex_lock(&(args->info->stdout_m));
-			printf("%i took a fork\n", args->self.index);
-			pthread_mutex_unlock(&(args->info->stdout_m));
+			take_left(args);
+			take_right(args);
 		}
 		else
 		{
-			pthread_mutex_lock(&(args->info->forks[(args->self.index + 1) % 4]));
-			pthread_mutex_lock(&(args->info->stdout_m));
-			printf("%i took a fork\n", args->self.index);
-			pthread_mutex_unlock(&(args->info->stdout_m));
-
-			pthread_mutex_lock(&(args->info->forks[(args->self.index) % 4]));
-			pthread_mutex_lock(&(args->info->stdout_m));
-			printf("%i took a fork\n", args->self.index);
-			pthread_mutex_unlock(&(args->info->stdout_m));
+			take_right(args);
+			take_left(args);
 		}
-		pthread_mutex_lock(&(args->info->timer_check[args->self.index]));
-		gettimeofday(&(args->info->death_timer[args->self.index]), NULL);
-		pthread_mutex_unlock(&(args->info->timer_check[args->self.index]));
-		pthread_mutex_lock(&(args->info->stdout_m));
-		printf("%i is eating\n", args->self.index);
-		pthread_mutex_unlock(&(args->info->stdout_m));
-		usleep(args->info->time_to_eat);
-		pthread_mutex_lock(&(args->info->timer_check[args->self.index]));
-		args->self.times_eaten += 1;
-		pthread_mutex_unlock(&(args->info->timer_check[args->self.index]));
-		pthread_mutex_unlock(&(args->info->forks[args->self.index % 4]));
-		pthread_mutex_unlock(&(args->info->forks[(args->self.index + 1) % 4]));
-		pthread_mutex_lock(&(args->info->stdout_m));
-		printf("%i is sleeping\n", args->self.index);
-		pthread_mutex_unlock(&(args->info->stdout_m));
-		usleep(args->info->time_to_sleep);
-		pthread_mutex_lock(&(args->info->stdout_m));
-		printf("%i is thinking\n", args->self.index);
-		pthread_mutex_unlock(&(args->info->stdout_m));
+		eat(args);
+		sleep(args);
+		think(args);
 		if (args->self.isdead == 1)
 			return (NULL);
 	}
 	return (NULL);
-}
-
-void	setup(t_args **args, int philosophers)
-{
-	int				i;
-	static t_information	info;
-	pthread_t		*threads;
-
-	*args = malloc((philosophers + 1) * sizeof(t_args));
-	threads = malloc(philosophers * sizeof(pthread_t));
-	pthread_mutex_init(&(info.stdout_m), NULL);
-	pthread_mutex_init(&(info.info_mutex), NULL);
-	pthread_mutex_lock(&(info.info_mutex));
-	info.all = philosophers;
-	info.time_to_eat = 3000000;
-	info.time_to_die = 2000000;
-	info.time_to_sleep = 2000000;
-	info.needs_to_eat = 10000;
-	info.forks = malloc(philosophers * sizeof(pthread_mutex_t));
-	info.timer_check = malloc(philosophers * sizeof(pthread_mutex_t));
-	info.death_timer = malloc(philosophers * sizeof(struct timeval));
-	i = 0;
-	while (i < philosophers)
-	{
-		pthread_mutex_init(info.forks + i, NULL);
-		pthread_mutex_init(info.timer_check + i, NULL);
-		i++;
-	}
-	info.threads = threads;
-	i = 0;
-	while (i < philosophers)
-	{
-		(*args)[i].self.times_eaten = 0;
-		(*args)[i].self.index = i;
-		(*args)[i].self.isdead = 0;
-		(*args)[i].info = &info;
-		i++;
-	}
-	pthread_mutex_lock(&(info.stdout_m));	
-	i = 0;
-	while (i < philosophers)
-	{
-		pthread_create(&(threads[i]), NULL, &philosoph, &((*args)[i]));
-		i++;
-	}	
-	pthread_mutex_unlock(&(info.stdout_m));
-	(*args)->info->death_thread = make_death_thread(*args);
 }
 
 /* complete freeing the memory, detaching threads and destroying mutexes */
@@ -204,9 +123,12 @@ int	main(void)
 {
 	t_args		*args;
 	int			i;
-	int			count = 4;
 
-	setup(&args, count);
+	setup(&args, 4);
+	args->info->time_to_eat = 3000000;
+	args->info->time_to_die = 2000000;
+	args->info->time_to_sleep = 2000000;
+	args->info->needs_to_eat = 10000;
 	pthread_join(args->info->threads[0], NULL);
 	pthread_join(args->info->threads[1], NULL);
 	pthread_join(args->info->threads[2], NULL);
