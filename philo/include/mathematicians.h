@@ -6,7 +6,7 @@
 /*   By: dhorvath <dhorvath@hive.student.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/08 11:28:13 by dhorvath          #+#    #+#             */
-/*   Updated: 2024/01/12 17:07:15 by dhorvath         ###   ########.fr       */
+/*   Updated: 2024/02/08 15:22:40 by dhorvath         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 typedef struct s_philosopher
 {
 	unsigned char	index;
+	unsigned char	right;
 	unsigned int	times_eaten;
 	int				isdead;
 }	t_philosopher;
@@ -47,5 +48,11 @@ typedef struct s_args
 	t_information	*info;
 	t_philosopher	self;
 }	t_args;
+
+void	take_left(t_args *args);
+void	take_right(t_args *args);
+void	eat(t_args *args);
+void	sleep(t_args *args);
+void	think(t_args *args);
 
 #endif
