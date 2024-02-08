@@ -6,7 +6,7 @@
 /*   By: dhorvath <dhorvath@hive.student.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/08 11:27:30 by dhorvath          #+#    #+#             */
-/*   Updated: 2024/02/08 16:00:24 by dhorvath         ###   ########.fr       */
+/*   Updated: 2024/02/08 16:10:35 by dhorvath         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,48 +68,6 @@ void	clean(t_args *args)
 }
 
 /* separate into deathtime checks and required eating times */
-void	*checkup(void *arg)
-{
-	t_args			*args;
-	int				i;
-	struct timeval	current;
-
-	args = (t_args *) arg;
-	gettimeofday(&current, NULL);
-	i = 0;
-	while (i < args->info->all)
-	{
-		pthread_mutex_lock(&(args->info->timer_check[i]));
-		if (current.tv_usec > args->info->death_timer[i].tv_usec + args->info->time_to_die)
-		{
-			pthread_mutex_lock(&(args->info->stdout_m));
-			printf("Philosopher #%i died, skill issue if you ask me\n", i);
-			pthread_mutex_unlock(&(args->info->stdout_m));
-			clean(args);
-			exit(0);
-		}
-		pthread_mutex_unlock(&(args->info->timer_check[i]));
-		i++;
-	}
-	i = 0;
-	while (i < args->info->all)
-	{
-		pthread_mutex_lock(&(args->info->timer_check[i]));
-		if (args[i].self.times_eaten < args->info->needs_to_eat)
-			break ;
-		pthread_mutex_unlock(&(args->info->timer_check[i]));
-		i++;
-	}
-	if (i == args->info->all)
-	{
-		pthread_mutex_lock(&(args->info->stdout_m));
-		printf("Everybody has eaten enough times\n");
-		pthread_mutex_unlock(&(args->info->stdout_m));
-		clean(args);
-		exit(0);
-	}
-	return (NULL);
-}
 
 pthread_t	make_death_thread(t_args *args)
 {
