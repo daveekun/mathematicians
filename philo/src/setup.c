@@ -6,7 +6,7 @@
 /*   By: dhorvath <dhorvath@hive.student.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 15:50:45 by dhorvath          #+#    #+#             */
-/*   Updated: 2024/02/08 16:00:45 by dhorvath         ###   ########.fr       */
+/*   Updated: 2024/02/08 16:22:20 by dhorvath         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 static void	create_philo(t_args *args, int philosophers, t_information *info)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (i < philosophers)
