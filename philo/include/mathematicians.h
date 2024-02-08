@@ -6,7 +6,7 @@
 /*   By: dhorvath <dhorvath@hive.student.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/08 11:28:13 by dhorvath          #+#    #+#             */
-/*   Updated: 2024/02/08 16:25:25 by dhorvath         ###   ########.fr       */
+/*   Updated: 2024/02/08 21:12:03 by dhorvath         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,15 +49,18 @@ typedef struct s_args
 	t_philosopher	self;
 }	t_args;
 
-void	take_left(t_args *args);
-void	take_right(t_args *args);
-void	eat(t_args *args);
-void	sleep(t_args *args);
-void	think(t_args *args);
+void		take_left(t_args *args);
+void		take_right(t_args *args);
+void		eat(t_args *args);
+void		go_sleep(t_args *args);
+void		think(t_args *args);
 
-void	*philosoph(void *arg);
-void	setup(t_args **args, int philosophers);
-void	*checkup(void *arg);
-void	*checkup(void *arg);
+void		clean(t_args *args);
+
+void		*philosoph(void *arg);
+void		*checkup(void *arg);
+void		*checkup(void *arg);
+void		setup(t_args **args, int philosophers, t_information *info);
+pthread_t	make_death_thread(t_args *args);
 
 #endif

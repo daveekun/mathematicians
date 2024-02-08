@@ -6,13 +6,13 @@
 /*   By: dhorvath <dhorvath@hive.student.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 15:50:45 by dhorvath          #+#    #+#             */
-/*   Updated: 2024/02/08 16:22:20 by dhorvath         ###   ########.fr       */
+/*   Updated: 2024/02/08 21:14:23 by dhorvath         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mathematicians.h"
 
-static void	create_philo(t_args *args, int philosophers, t_information *info)
+static void	create_philos(t_args *args, int philosophers, t_information *info)
 {
 	int	i;
 
@@ -42,30 +42,28 @@ static void	create_threads(pthread_t *threads, t_args *args, int philosophers)
 	pthread_mutex_unlock(&(args->info->stdout_m));
 }
 
-void	setup(t_args **args, int philosophers)
+void	setup(t_args **args, int philosophers, t_information *info)
 {
 	int						i;
-	static t_information	info;
 	pthread_t				*threads;
 
-	*args = malloc((philosophers + 1) * sizeof(t_args));
+	*args = malloc((philosophers) * sizeof(t_args));
 	threads = malloc(philosophers * sizeof(pthread_t));
-	pthread_mutex_init(&(info.stdout_m), NULL);
-	pthread_mutex_init(&(info.info_mutex), NULL);
-	pthread_mutex_lock(&(info.info_mutex));
-	info.all = philosophers;
-	info.forks = malloc(philosophers * sizeof(pthread_mutex_t));
-	info.timer_check = malloc(philosophers * sizeof(pthread_mutex_t));
-	info.death_timer = malloc(philosophers * sizeof(struct timeval));
+	pthread_mutex_init(&(info->stdout_m), NULL);
+	pthread_mutex_init(&(info->info_mutex), NULL);
+	pthread_mutex_lock(&(info->info_mutex));
+	info->forks = malloc(philosophers * sizeof(pthread_mutex_t));
+	info->timer_check = malloc(philosophers * sizeof(pthread_mutex_t));
+	info->death_timer = malloc(philosophers * sizeof(struct timeval));
 	i = 0;
 	while (i < philosophers)
 	{
-		pthread_mutex_init(info.forks + i, NULL);
-		pthread_mutex_init(info.timer_check + i, NULL);
+		pthread_mutex_init(info->forks + i, NULL);
+		pthread_mutex_init(info->timer_check + i, NULL);
 		i++;
 	}
-	info.threads = threads;
-	create_philo(*args, philosophers, &info);
+	info->threads = threads;
+	create_philos(*args, philosophers, info);
 	create_threads(threads, *args, philosophers);
 	(*args)->info->death_thread = make_death_thread(*args);
 }

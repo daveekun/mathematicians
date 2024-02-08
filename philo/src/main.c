@@ -6,7 +6,7 @@
 /*   By: dhorvath <dhorvath@hive.student.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/08 11:27:30 by dhorvath          #+#    #+#             */
-/*   Updated: 2024/02/08 16:10:35 by dhorvath         ###   ########.fr       */
+/*   Updated: 2024/02/08 22:01:38 by dhorvath         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,18 +25,10 @@ void	*philosoph(void *arg)
 	pthread_mutex_unlock(&(args->info->stdout_m));
 	while (1)
 	{
-		if (args->self.index % 2)
-		{
-			take_left(args);
-			take_right(args);
-		}
-		else
-		{
-			take_right(args);
-			take_left(args);
-		}
+		take_left(args);
+		take_right(args);
 		eat(args);
-		sleep(args);
+		go_sleep(args);
 		think(args);
 		if (args->self.isdead == 1)
 			return (NULL);
@@ -57,7 +49,7 @@ void	clean(t_args *args)
 		pthread_mutex_destroy(&(args->info->timer_check[i]));
 		i++;
 	}
-	pthread_detach(args->info->death_thread);
+	// pthread_detach(args->info->death_thread);
 	pthread_mutex_destroy(&(args->info->stdout_m));
 	free(args->info->forks);
 	free(args->info->timer_check);
@@ -68,7 +60,6 @@ void	clean(t_args *args)
 }
 
 /* separate into deathtime checks and required eating times */
-
 pthread_t	make_death_thread(t_args *args)
 {
 	pthread_t	death_thread;
@@ -77,19 +68,33 @@ pthread_t	make_death_thread(t_args *args)
 	return (death_thread);
 }
 
-int	main(void)
+t_information	parse_args(int argc, char **argv)
 {
-	t_args		*args;
-	int			i;
+	t_information	info;
 
-	setup(&args, 4);
-	args->info->time_to_eat = 3000000;
-	args->info->time_to_die = 2000000;
-	args->info->time_to_sleep = 2000000;
-	args->info->needs_to_eat = 10000;
-	pthread_join(args->info->threads[0], NULL);
-	pthread_join(args->info->threads[1], NULL);
-	pthread_join(args->info->threads[2], NULL);
-	pthread_join(args->info->threads[3], NULL);
+	info.all = atoi(argv[1]);
+	info.time_to_die = atoi(argv[2]);
+	info.time_to_eat = atoi(argv[3]);
+	info.time_to_sleep = atoi(argv[4]);
+	if (argc == 5)
+		info.needs_to_eat = -1;
+	else if (argc == 6)
+		info.needs_to_eat = atoi(argv[5]);
+	return (info);
+}
+
+int	main(int argc, char **argv)
+{
+	t_args			*args;
+	int				i;
+	t_information	info;
+
+	i = 0;
+	if (argc > 6 || argc < 5)
+		return (0);
+	info = parse_args(argc, argv);
+	setup(&args, info.all, &info);
+	while (i < info.all)
+		pthread_join(args->info->threads[i++], NULL);
 	return (0);
 }

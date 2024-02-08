@@ -6,7 +6,7 @@
 /*   By: dhorvath <dhorvath@hive.student.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 15:20:37 by dhorvath          #+#    #+#             */
-/*   Updated: 2024/02/08 15:22:34 by dhorvath         ###   ########.fr       */
+/*   Updated: 2024/02/08 22:00:08 by dhorvath         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ void	eat(t_args *args)
 	pthread_mutex_lock(&(args->info->stdout_m));
 	printf("%i is eating\n", args->self.index);
 	pthread_mutex_unlock(&(args->info->stdout_m));
-	usleep(args->info->time_to_eat);
+	usleep((long)args->info->time_to_eat * 1000L);
 	pthread_mutex_lock(&(args->info->timer_check[args->self.index]));
 	args->self.times_eaten += 1;
 	pthread_mutex_unlock(&(args->info->timer_check[args->self.index]));
@@ -44,12 +44,12 @@ void	eat(t_args *args)
 	pthread_mutex_unlock(&(args->info->forks[args->self.right]));
 }
 
-void	sleep(t_args *args)
+void	go_sleep(t_args *args)
 {
 	pthread_mutex_lock(&(args->info->stdout_m));
 	printf("%i is sleeping\n", args->self.index);
 	pthread_mutex_unlock(&(args->info->stdout_m));
-	usleep(args->info->time_to_sleep);
+	usleep((long)args->info->time_to_sleep * 1000L);
 }
 
 void	think(t_args *args)
