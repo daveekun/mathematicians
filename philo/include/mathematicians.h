@@ -6,7 +6,7 @@
 /*   By: dhorvath <dhorvath@hive.student.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/08 11:28:13 by dhorvath          #+#    #+#             */
-/*   Updated: 2024/02/08 15:22:40 by dhorvath         ###   ########.fr       */
+/*   Updated: 2024/02/08 16:00:55 by dhorvath         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,4 +55,6 @@ void	eat(t_args *args);
 void	sleep(t_args *args);
 void	think(t_args *args);
 
+void	*philosoph(void *arg);
+void	setup(t_args **args, int philosophers);
 #endif
