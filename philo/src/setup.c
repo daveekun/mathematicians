@@ -6,7 +6,7 @@
 /*   By: dhorvath <dhorvath@hive.student.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 15:50:45 by dhorvath          #+#    #+#             */
-/*   Updated: 2024/02/08 21:14:23 by dhorvath         ###   ########.fr       */
+/*   Updated: 2024/02/15 18:27:49 by dhorvath         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ static void	create_philos(t_args *args, int philosophers, t_information *info)
 		args[i].self.right = (i + 1) % philosophers;
 		args[i].self.isdead = 0;
 		args[i].info = info;
+		gettimeofday(&(args->info->death_timer[i]), NULL);
 		i++;
 	}
 }
@@ -36,10 +37,14 @@ static void	create_threads(pthread_t *threads, t_args *args, int philosophers)
 	pthread_mutex_lock(&(args->info->stdout_m));
 	while (i < philosophers)
 	{
-		pthread_create(&(threads[i]), NULL, &philosoph, &args[i]);
-		i++;
+		if (pthread_create(&(threads[i]), NULL, &philosoph, &args[i]) == 0)
+			i++;
+		else
+		{
+			clean(args);
+			return ;
+		}
 	}
-	pthread_mutex_unlock(&(args->info->stdout_m));
 }
 
 void	setup(t_args **args, int philosophers, t_information *info)
@@ -66,4 +71,5 @@ void	setup(t_args **args, int philosophers, t_information *info)
 	create_philos(*args, philosophers, info);
 	create_threads(threads, *args, philosophers);
 	(*args)->info->death_thread = make_death_thread(*args);
+	pthread_mutex_unlock(&(info->stdout_m));
 }

@@ -1,7 +1,7 @@
 NAME	=	Philosophers
-FLAGS	=	-pthread -fsanitize=thread -g
+FLAGS	=	-pthread
 SRC_DIR	=	src/
-SRC		=	$(addprefix $(SRC_DIR), main.c setup.c philosopher.c death_thread.c)
+SRC		=	$(addprefix $(SRC_DIR), main.c setup.c philosopher.c death_thread.c ft_atoi.c)
 OBJ_DIR	=	obj/
 OBJ		=	$(addprefix $(OBJ_DIR), $(notdir $(SRC:.c=.o)))
 
